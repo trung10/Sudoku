@@ -14,8 +14,8 @@ public class Generator {
         this.K = K;
 
         // Compute square root of N
-        Double SRNd = Math.sqrt(N);
-        SRN = SRNd.intValue();
+        double SRNd = Math.sqrt(N);
+        SRN = (int) SRNd;
 
         mat = new int[N][N];
     }

@@ -18,7 +18,7 @@ class SudokuGame(context: Context) : GameTimer.GameTimerListener {
     val gameTimeLiveData = MutableLiveData<TimeInfo>()
     val isPuzzleSolved = MutableLiveData<Boolean>()
 
-    private val board = Board.createAutoBoard(51) //Board.createBoardFromFile(context, "sampleBoard.txt")
+    private val board = Board.createAutoBoard(50) //Board.createBoardFromFile(context, "sampleBoard.txt")
     private val gameTimer = GameTimer()
 
     private var selectedRow = -1
