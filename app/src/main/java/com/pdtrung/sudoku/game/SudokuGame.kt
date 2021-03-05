@@ -3,13 +3,11 @@ package com.pdtrung.sudoku.game
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.patrickfeltes.sudokuandroid.common.GameTimer
-import com.patrickfeltes.sudokuandroid.common.TimeInfo
+import com.pdtrung.sudoku.model.TimeInfo
 import com.pdtrung.sudoku.model.Board
 import com.pdtrung.sudoku.model.Cell
 
 class SudokuGame(context: Context) : GameTimer.GameTimerListener {
-
-    private val TAG = "SudokuGame"
 
     val cellsLiveData = MutableLiveData<List<Cell>>()
     val selectedCellLiveData = MutableLiveData<Pair<Int, Int>>()

@@ -1,5 +1,6 @@
 package com.pdtrung.sudoku.di.module
 
+/*
 import com.pdtrung.sudoku.network.AppApi
 import com.pdtrung.sudoku.model.BASE_URL
 import dagger.Module
@@ -16,11 +17,13 @@ import java.util.concurrent.TimeUnit
 @Suppress("unused")
 object NetworkModule {
 
-    /**
+    */
+/**
      * Provides the Post service implementation.
      * @param retrofit the Retrofit object used to instantiate the service
      * @return the Post service implementation.
-     */
+     *//*
+
     @Provides
     @Reusable
     @JvmStatic
@@ -28,10 +31,12 @@ object NetworkModule {
         return retrofit.create(AppApi::class.java)
     }
 
-    /**
+    */
+/**
      * Provides the Retrofit object.
      * @return the Retrofit object
-     */
+     *//*
+
     @Provides
     @Reusable
     @JvmStatic
@@ -44,10 +49,12 @@ object NetworkModule {
             .build()
     }
 
-    /**
+    */
+/**
      * Provides the OkHttpClient object.
      * @return the OkHttpClient object
-     */
+     *//*
+
     @Provides
     @Reusable
     @JvmStatic
@@ -58,4 +65,4 @@ object NetworkModule {
             .readTimeout(30, TimeUnit.SECONDS)
             .build()
     }
-}
+}*/

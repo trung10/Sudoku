@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.pdtrung.sudoku.game.Generator
 
-class Board(val size: Int, val cells: List<Cell>, private val solvedCells: List<Cell>) {
+class Board(val size: Int, val cells: List<Cell>/*, private val solvedCells: List<Cell>*/) {
     private var listener: PuzzleSolvedListener? = null
 
     fun updateCell(row: Int, col: Int, value: Int) {
@@ -30,7 +30,7 @@ class Board(val size: Int, val cells: List<Cell>, private val solvedCells: List<
     private fun isSolved(): Boolean {
         for (row in 0 until size) {
             for (col in 0 until size) {
-                if (getCell(row, col).value != getSolvedCell(row, col).value) {
+                if (getCell(row, col).value != getCell(row, col).solvedValue) {
                     return false
                 }
             }
@@ -44,7 +44,7 @@ class Board(val size: Int, val cells: List<Cell>, private val solvedCells: List<
     }
 
     fun getCell(row: Int, col: Int) = cells[row * size + col]
-    private fun getSolvedCell(row: Int, col: Int) = solvedCells[row * size + col]
+    //private fun getSolvedCell(row: Int, col: Int) = solvedCells[row * size + col]
 
     companion object {
         private var generator = Generator()
@@ -55,8 +55,8 @@ class Board(val size: Int, val cells: List<Cell>, private val solvedCells: List<
 
             val size = lines[0].toInt()
 
-            val cells = List(size * size) { i -> Cell(i / size, i % size, 0) }
-            val solvedCells = List(size * size) { i -> Cell(i / size, i % size, 0) }
+            val cells = List(size * size) { i -> Cell(i / size, i % size, 0, 0) }
+            //val solvedCells = List(size * size) { i -> Cell(i / size, i % size, 0) }
 
             // fill in unsolved board
             for (i in 1..size) {
@@ -73,7 +73,7 @@ class Board(val size: Int, val cells: List<Cell>, private val solvedCells: List<
             // fill in solved board
             for (i in (size + 2)..(2 * size + 1)) {
                 lines[i].forEachIndexed { stringIndex, c ->
-                    solvedCells[(i - size - 2) * size + stringIndex].value = c.toString().toInt()
+                    cells[(i - size - 2) * size + stringIndex].solvedValue = c.toString().toInt()
                 }
             }
 
@@ -93,13 +93,13 @@ class Board(val size: Int, val cells: List<Cell>, private val solvedCells: List<
                     0
                 }
                 for (w in 0..8) {
-                    s[w] = solvedCells[y * 9 + w].value
+                    s[w] = cells[y * 9 + w].solvedValue
 
                 }
                 Log.e("solvedCells", "$s)")
             }
 
-            return Board(size, cells, solvedCells)
+            return Board(size, cells)
         }
 
         /**
@@ -112,21 +112,21 @@ class Board(val size: Int, val cells: List<Cell>, private val solvedCells: List<
 
             val size = 9
 
-            var solvedCells =
-                MutableList(9 * 9) { index -> Cell(index / size, index % size, data[index / size][index % size]) }
+            val cells =
+                MutableList(9 * 9) { index -> Cell(index / size, index % size, 0, data[index / size][index % size])}
 
             generator.removeKDigits()
 
             data = generator.puzzles
 
-            var cells = List(9 * 9) { index -> Cell(index / size, index % size, data[index / size][index % size]).apply {
+            cells.forEachIndexed { index, cell ->
+                cell.value = data[index / size][index % size]
                 if (data[index / size][index % size] != 0){
-                    isStartingCell = true
+                    cell.isStartingCell = true
                 }
-            } }
+            }
 
-
-            return Board(size, cells, solvedCells)
+            return Board(size, cells)
         }
     }
 

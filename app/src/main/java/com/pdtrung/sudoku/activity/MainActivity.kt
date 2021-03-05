@@ -7,7 +7,7 @@ import android.widget.Button
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import com.patrickfeltes.sudokuandroid.common.TimeInfo
+import com.pdtrung.sudoku.model.TimeInfo
 import com.pdtrung.sudoku.R
 import com.pdtrung.sudoku.base.BaseActivity
 import com.pdtrung.sudoku.model.Cell

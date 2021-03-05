@@ -1,6 +1,7 @@
 package com.patrickfeltes.sudokuandroid.common
 
 import android.os.SystemClock
+import com.pdtrung.sudoku.model.TimeInfo
 import java.util.Timer
 import java.util.TimerTask
 

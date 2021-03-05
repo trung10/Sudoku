@@ -2,7 +2,6 @@ package com.pdtrung.sudoku
 
 import android.app.Application
 import com.pdtrung.sudoku.game.SudokuGame
-import io.realm.Realm
 
 @Suppress("unused")
 class SudokuApplication : Application() {
@@ -10,7 +9,7 @@ class SudokuApplication : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        Realm.init(this)
+        // Realm.init(this)
         game = SudokuGame(this)
     }
 
