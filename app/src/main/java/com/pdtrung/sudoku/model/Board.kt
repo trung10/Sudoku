@@ -20,6 +20,33 @@ class Board(val size: Int, val cells: List<Cell>/*, private val solvedCells: Lis
         }
     }
 
+    fun updateCell(cell: Cell) {
+        if (cell.row != -1 && cell.col != -1) {
+           val c = getCell(cell.row, cell.col)
+
+            c.value = cell.value
+            c.notes = cell.notes
+        }
+
+        if (isSolved()) {
+            Log.d("Board", "Puzzle Solved")
+            if (listener != null) {
+                listener!!.isPuzzleSolved(true)
+            }
+        }
+    }
+
+    fun erase(row: Int, col: Int){
+        val cell = getCell(row, col)
+        cell.notes.clear()
+        cell.value = 0
+    }
+
+    fun hint(row: Int, col: Int){
+        getCell(row, col).isStartingCell = true
+    }
+
+
     fun isStartingCell(row: Int, col: Int): Boolean {
         if (row != -1 && col != -1) {
             return getCell(row, col).isStartingCell

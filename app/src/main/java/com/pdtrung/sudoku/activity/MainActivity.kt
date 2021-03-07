@@ -50,12 +50,12 @@ class MainActivity : BaseActivity(), SudokuView.SudokuBoardTouchListener {
             nineButton
         )
         numberButtons.forEach { button ->
-            button.setOnClickListener { (viewModel as MainViewModel).sudokuGame.handleInput(button.text.toString().toInt()) }
+            button.setOnClickListener { (viewModel as MainViewModel).fill(button.text.toString().toInt()) }
         }
 
-        notesButton.setOnClickListener { (viewModel as MainViewModel).sudokuGame.changeNoteState() }
+        notesButton.setOnClickListener { (viewModel as MainViewModel).notes() }
         deleteButton.setOnClickListener {
-            (viewModel as MainViewModel).sudokuGame.delete()
+            (viewModel as MainViewModel).erase()
         }
     }
 

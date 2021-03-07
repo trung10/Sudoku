@@ -1,11 +1,10 @@
 package com.pdtrung.sudoku.base
 
-import com.pdtrung.sudoku.base.`interface`.UndoableCommand
+import com.pdtrung.sudoku.game.SudokuGame
 
-class EraseCommand(): UndoableCommand {
-    override fun undo() {
-    }
+class EraseCommand(game: SudokuGame) : UndoableGameCommand(game) {
 
     override fun execute() {
+        mGame.erase()
     }
 }

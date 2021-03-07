@@ -3,6 +3,7 @@ package com.pdtrung.sudoku.game
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.patrickfeltes.sudokuandroid.common.GameTimer
+import com.pdtrung.sudoku.base.CommandManager
 import com.pdtrung.sudoku.model.TimeInfo
 import com.pdtrung.sudoku.model.Board
 import com.pdtrung.sudoku.model.Cell
@@ -16,6 +17,7 @@ class SudokuGame(context: Context) : GameTimer.GameTimerListener {
     val gameTimeLiveData = MutableLiveData<TimeInfo>()
     val isPuzzleSolved = MutableLiveData<Boolean>()
 
+    // all data in here
     private val board = Board.createAutoBoard(50) //Board.createBoardFromFile(context, "sampleBoard.txt")
     private val gameTimer = GameTimer()
 
@@ -34,6 +36,8 @@ class SudokuGame(context: Context) : GameTimer.GameTimerListener {
             }
         })
     }
+
+    fun getSelectedCell(): Cell = board.getCell(selectedRow, selectedCol)
 
     fun handleInput(value: Int) {
         if (selectedRow == -1 || selectedCol == -1) return
@@ -90,6 +94,27 @@ class SudokuGame(context: Context) : GameTimer.GameTimerListener {
 
     fun onResume() {
         gameTimer.onResume()
+    }
+
+    fun erase(){
+        board.erase(selectedRow, selectedCol)
+        cellsLiveData.postValue(board.cells)
+    }
+
+    fun hint(){
+        board.hint(selectedRow, selectedCol)
+        cellsLiveData.postValue(board.cells)
+    }
+
+    fun undo(cell: Cell){
+        selectedCol = cell.col
+        selectedRow = cell.row
+
+        board.updateCell(cell)
+
+        //todo update ui
+        selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
+        cellsLiveData.postValue(board.cells)
     }
 
     override fun publishTime(time: TimeInfo) {

@@ -1,11 +1,10 @@
 package com.pdtrung.sudoku.base
 
-import com.pdtrung.sudoku.base.`interface`.UndoableCommand
+import com.pdtrung.sudoku.game.SudokuGame
 
-class FillCommand(): UndoableCommand {
-    override fun undo() {
-    }
+class FillCommand(game: SudokuGame, private val value: Int) : UndoableGameCommand(game) {
 
     override fun execute() {
+        mGame.handleInput(value)
     }
 }
