@@ -7,6 +7,10 @@ import com.pdtrung.sudoku.model.Cell
 abstract class UndoableGameCommand(val mGame: SudokuGame) : UndoableCommand {
     private val oldCell: Cell = mGame.getSelectedCell().copy()
 
+    init {
+        oldCell.notes.addAll(mGame.getSelectedCell().notes)
+    }
+
     override fun undo() {
         mGame.undo(oldCell)
     }

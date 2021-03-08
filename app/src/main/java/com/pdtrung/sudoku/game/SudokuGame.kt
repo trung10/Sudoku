@@ -3,7 +3,6 @@ package com.pdtrung.sudoku.game
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.patrickfeltes.sudokuandroid.common.GameTimer
-import com.pdtrung.sudoku.base.CommandManager
 import com.pdtrung.sudoku.model.TimeInfo
 import com.pdtrung.sudoku.model.Board
 import com.pdtrung.sudoku.model.Cell
@@ -18,7 +17,7 @@ class SudokuGame(context: Context) : GameTimer.GameTimerListener {
     val isPuzzleSolved = MutableLiveData<Boolean>()
 
     // all data in here
-    private val board = Board.createAutoBoard(50) //Board.createBoardFromFile(context, "sampleBoard.txt")
+    private val board = Board.createAutoBoard(2) //Board.createBoardFromFile(context, "sampleBoard.txt")
     private val gameTimer = GameTimer()
 
     private var selectedRow = -1
@@ -30,9 +29,13 @@ class SudokuGame(context: Context) : GameTimer.GameTimerListener {
         selectedCellLiveData.postValue(Pair(selectedRow, selectedCol))
         isTakingNotesLiveData.postValue(isTakingNotes)
         gameTimer.registerListener(this)
-        board.setListener(object : Board.PuzzleSolvedListener {
+        board.setListener(object : Board.PuzzleListener {
             override fun isPuzzleSolved(bool: Boolean) {
                 isPuzzleSolved.postValue(bool)
+            }
+
+            override fun isGameOVer() {
+
             }
         })
     }

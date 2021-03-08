@@ -5,21 +5,29 @@ import android.util.Log
 import com.pdtrung.sudoku.game.Generator
 
 class Board(val size: Int, val cells: List<Cell>/*, private val solvedCells: List<Cell>*/) {
-    private var listener: PuzzleSolvedListener? = null
+    private var listener: PuzzleListener? = null
+    private var mistake = 0 // if it equal 3 game is over
 
     fun updateCell(row: Int, col: Int, value: Int) {
         if (row != -1 && col != -1) {
+            if (getCell(row, col).solvedValue != value){
+                mistake++
+                if (mistake == 3)
+                    listener?.isGameOVer()
+            }
+
             getCell(row, col).value = value
         }
 
         if (isSolved()) {
             Log.d("Board", "Puzzle Solved")
             if (listener != null) {
-                listener!!.isPuzzleSolved(true)
+                listener?.isPuzzleSolved(true)
             }
         }
     }
 
+    // update cell using for string
     fun updateCell(cell: Cell) {
         if (cell.row != -1 && cell.col != -1) {
            val c = getCell(cell.row, cell.col)
@@ -66,7 +74,7 @@ class Board(val size: Int, val cells: List<Cell>/*, private val solvedCells: Lis
         return true
     }
 
-    fun setListener(listener: PuzzleSolvedListener) {
+    fun setListener(listener: PuzzleListener) {
         this.listener = listener
     }
 
@@ -157,7 +165,8 @@ class Board(val size: Int, val cells: List<Cell>/*, private val solvedCells: Lis
         }
     }
 
-    interface PuzzleSolvedListener {
+    interface PuzzleListener {
         fun isPuzzleSolved(bool: Boolean)
+        fun isGameOVer()
     }
 }

@@ -57,6 +57,10 @@ class MainActivity : BaseActivity(), SudokuView.SudokuBoardTouchListener {
         deleteButton.setOnClickListener {
             (viewModel as MainViewModel).erase()
         }
+
+        undoButton.setOnClickListener {
+            (viewModel as MainViewModel).undo()
+        }
     }
 
     override fun onPause() {
