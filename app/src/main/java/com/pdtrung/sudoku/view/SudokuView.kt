@@ -37,18 +37,23 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
     private val selectedPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = Color.parseColor("#6ead3a")
+        color = Color.parseColor("#4a90e2"/*"#6ead3a"*/)
     }
 
     private val textPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = Color.BLACK
+        color = Color.parseColor("#0d47a1")//Color.BLACK
     }
 
     private val startingCellTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
-        typeface = Typeface.DEFAULT_BOLD
+        typeface = Typeface.SERIF
+    }
+
+    private val mistakeTextPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.RED
     }
 
     private val startingCellPaint = Paint().apply {
@@ -58,7 +63,7 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
     private val selectedSameRowColPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = Color.parseColor("#efedef")
+        color = Color.parseColor("#698fc6")
     }
 
     private val noteTextPaint = Paint().apply {
@@ -75,7 +80,7 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
     }
 
     private fun updatePaints(width: Int) {
-        val cellWidth = width / size
+        val cellWidth = width / size // size = 9
 
         noteTextPaint.textSize = cellWidth / sqrtSize.toFloat()
         textPaint.textSize = cellWidth / 1.5F
@@ -101,6 +106,7 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
             val col = cell.col
 
             if (cell.isStartingCell) {
+                // todo highlight
                 fillCell(canvas, row, col, startingCellPaint)
             } else if (selectedRow == -1 || selectedCol == -1) {
                 // do nothing
