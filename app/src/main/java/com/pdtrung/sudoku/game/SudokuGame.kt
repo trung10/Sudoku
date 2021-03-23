@@ -17,7 +17,8 @@ class SudokuGame(context: Context) : GameTimer.GameTimerListener {
     val isPuzzleSolved = MutableLiveData<Boolean>()
 
     // all data in here
-    private val board = Board.createAutoBoard(30) //Board.createBoardFromFile(context, "sampleBoard.txt")
+    private val board =
+        Board.createAutoBoard(30) //Board.createBoardFromFile(context, "sampleBoard.txt")
     private val gameTimer = GameTimer()
 
     private var selectedRow = -1
@@ -46,6 +47,9 @@ class SudokuGame(context: Context) : GameTimer.GameTimerListener {
         if (selectedRow == -1 || selectedCol == -1) return
         if (isTakingNotes) {
             val cell = board.getCell(selectedRow, selectedCol)
+
+            cell.value = 0 // reset value
+
             if (cell.notes.contains(value)) {
                 cell.notes.remove(value)
             } else {
@@ -99,17 +103,17 @@ class SudokuGame(context: Context) : GameTimer.GameTimerListener {
         gameTimer.onResume()
     }
 
-    fun erase(){
+    fun erase() {
         board.erase(selectedRow, selectedCol)
         cellsLiveData.postValue(board.cells)
     }
 
-    fun hint(){
+    fun hint() {
         board.hint(selectedRow, selectedCol)
         cellsLiveData.postValue(board.cells)
     }
 
-    fun undo(cell: Cell){
+    fun undo(cell: Cell) {
         selectedCol = cell.col
         selectedRow = cell.row
 

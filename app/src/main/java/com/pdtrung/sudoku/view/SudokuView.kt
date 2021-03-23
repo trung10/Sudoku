@@ -45,6 +45,11 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         color = Color.parseColor("#0d47a1")//Color.BLACK
     }
 
+    private val textMistakePaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.parseColor("#cc3340")//Color.BLACK
+    }
+
     private val startingCellTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.BLACK
@@ -53,7 +58,7 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
     private val mistakeTextPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = Color.RED
+        color = Color.parseColor("#f5b5ba")
     }
 
     private val startingCellPaint = Paint().apply {
@@ -89,6 +94,7 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
         noteTextPaint.textSize = cellWidth / sqrtSize.toFloat()
         textPaint.textSize = cellWidth / 1.5F
+        textMistakePaint.textSize = cellWidth / 1.5F
         startingCellTextPaint.textSize = cellWidth / 1.5F
     }
 
@@ -110,27 +116,67 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
             val row = cell.row
             val col = cell.col
 
-            /*if (cell.isStartingCell) {
-                // todo highlight
-                fillCell(canvas, row, col, startingCellPaint)
-            } else*/
+            when {
+                selectedRow == -1 || selectedCol == -1 -> {
+                    // do nothing
+                }
+                row == selectedRow && col == selectedCol -> {
+                    fillCell(canvas, row, col, selectedPaint)
+                }
 
-            if (selectedRow == -1 || selectedCol == -1) {
-                // do nothing
-            } else if (cells != null && cell.value != 0 && cell.value == cells!![selectedRow * size + selectedCol].value) {
-                if (cell.value != cell.solvedValue) {
-                    fillCell(canvas, row, col, mistakeTextPaint)
-                } else {
+                row == selectedRow || col == selectedCol -> {
+                    paintSquareAndRow(canvas, cell, row, col)
+
+                }
+                row / sqrtSize == selectedRow / sqrtSize && col / sqrtSize == selectedCol / sqrtSize -> {
+                    paintSquareAndRow(canvas, cell, row, col)
+                }
+
+                cells != null && cell.value != 0 && cell.value == getSelectedCell().value -> {
                     fillCell(canvas, row, col, selectedSameValuePaint)
                 }
-            } else if (row == selectedRow && col == selectedCol) {
-                fillCell(canvas, row, col, selectedPaint)
-            } else if (row == selectedRow || col == selectedCol) {
-                fillCell(canvas, row, col, selectedSameRowColPaint)
-            } else if (row / sqrtSize == selectedRow / sqrtSize && col / sqrtSize == selectedCol / sqrtSize) {
-                fillCell(canvas, row, col, selectedSameRowColPaint)
             }
         }
+    }
+
+    private fun isSolvedSquare(row: Int, col: Int): Boolean {
+        if(selectedRow == -1 || selectedCol == -1) {
+            // do nothing
+            return false
+        }
+
+        val squareCol = selectedCol / sqrtSize
+        val squaredRow = selectedRow / sqrtSize
+
+        cells?.let {
+            for (i in 0..2) {
+                for (j in 0..2){
+                   if (it[i * sqrtSize * squaredRow + j * squareCol].value != it[j].solvedValue)
+                       return false
+                }
+            }
+        }
+
+        return true
+    }
+
+    private fun isSolvedRow(row: Int): Boolean {
+        // todo
+        return false
+    }
+
+    private fun isSolvedCol(cal: Int): Boolean {
+        // todo
+        return false
+    }
+
+    private fun paintSquareAndRow(canvas: Canvas, cell: Cell, row: Int, col: Int) {
+        if (cells != null && cell.value != 0 && cell.value == getSelectedCell().value) {
+            fillCell(canvas, row, col, mistakeTextPaint)
+        } else {
+            fillCell(canvas, row, col, selectedSameRowColPaint)
+        }
+
     }
 
     private fun fillCell(canvas: Canvas, row: Int, col: Int, paint: Paint) = canvas.drawRect(
@@ -140,6 +186,8 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         (row + 1) * cellHeight,
         paint
     )
+
+    private fun getSelectedCell() = cells!![selectedRow * size + selectedCol]
 
     private fun drawLines(canvas: Canvas) {
         canvas.drawRect(0F, 0F, width.toFloat(), height.toFloat(), thickLinePaint)
@@ -191,7 +239,7 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
             val paintToUse = when (cell.isStartingCell) {
                 true -> startingCellTextPaint
-                false -> textPaint
+                false -> if (value != cell.solvedValue) textMistakePaint else textPaint
             }
 
             val textBounds = Rect()
