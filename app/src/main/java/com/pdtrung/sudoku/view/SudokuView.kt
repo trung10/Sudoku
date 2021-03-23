@@ -58,12 +58,17 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
     private val startingCellPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = Color.parseColor("#acacac")
+        color = Color.parseColor("#fafafa")
     }
 
     private val selectedSameRowColPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = Color.parseColor("#698fc6")
+        color = Color.parseColor("#4D4A90E2")
+    }
+
+    private val selectedSameValuePaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.parseColor("#804A90E2")
     }
 
     private val noteTextPaint = Paint().apply {
@@ -105,11 +110,19 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
             val row = cell.row
             val col = cell.col
 
-            if (cell.isStartingCell) {
+            /*if (cell.isStartingCell) {
                 // todo highlight
                 fillCell(canvas, row, col, startingCellPaint)
-            } else if (selectedRow == -1 || selectedCol == -1) {
+            } else*/
+
+            if (selectedRow == -1 || selectedCol == -1) {
                 // do nothing
+            } else if (cells != null && cell.value != 0 && cell.value == cells!![selectedRow * size + selectedCol].value) {
+                if (cell.value != cell.solvedValue) {
+                    fillCell(canvas, row, col, mistakeTextPaint)
+                } else {
+                    fillCell(canvas, row, col, selectedSameValuePaint)
+                }
             } else if (row == selectedRow && col == selectedCol) {
                 fillCell(canvas, row, col, selectedPaint)
             } else if (row == selectedRow || col == selectedCol) {
