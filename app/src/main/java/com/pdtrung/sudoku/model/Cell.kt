@@ -8,4 +8,6 @@ data class Cell(
     var isStartingCell: Boolean = false
 ) {
     var notes = mutableSetOf<Int>()
+
+    var isSolved = solvedValue == value
 }

@@ -127,9 +127,23 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
                 row == selectedRow || col == selectedCol -> {
                     paintSquareAndRow(canvas, cell, row, col)
 
+                    if (isSolvedRow(row)){
+                        //todo animation
+
+                    }
+
+                    if (isSolvedCol(col)){
+                        //todo animation
+
+                    }
                 }
                 row / sqrtSize == selectedRow / sqrtSize && col / sqrtSize == selectedCol / sqrtSize -> {
                     paintSquareAndRow(canvas, cell, row, col)
+
+                    if (isSolvedSquare(row, col)){
+                        //todo animation
+
+                    }
                 }
 
                 cells != null && cell.value != 0 && cell.value == getSelectedCell().value -> {
@@ -151,7 +165,7 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         cells?.let {
             for (i in 0..2) {
                 for (j in 0..2){
-                   if (it[i * sqrtSize * squaredRow + j * squareCol].value != it[j].solvedValue)
+                   if (!it[(i + sqrtSize * squaredRow) * size  + j + sqrtSize * squareCol].isSolved)
                        return false
                 }
             }
@@ -161,13 +175,23 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
     }
 
     private fun isSolvedRow(row: Int): Boolean {
-        // todo
-        return false
+        cells?.let {
+            for (i in 0..8) {
+               if (!it[row * size + i].isSolved)
+                   return false
+            }
+        }
+        return true
     }
 
-    private fun isSolvedCol(cal: Int): Boolean {
-        // todo
-        return false
+    private fun isSolvedCol(col: Int): Boolean {
+        cells?.let {
+            for (i in 0..8) {
+                if (!it[i * size + col].isSolved)
+                    return false
+            }
+        }
+        return true
     }
 
     private fun paintSquareAndRow(canvas: Canvas, cell: Cell, row: Int, col: Int) {
