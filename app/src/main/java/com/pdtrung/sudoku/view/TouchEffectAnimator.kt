@@ -11,12 +11,11 @@ import android.view.animation.DecelerateInterpolator
 import android.view.animation.Transformation
 
 
-class TouchEffectAnimator {
+class RippleEffectAnimator(private var mView: View) {
     private val EASE_ANIM_DURATION = 200
     private val RIPPLE_ANIM_DURATION = 300
     private val MAX_RIPPLE_ALPHA = 255
 
-    private var mView: View? = null
     private var mClipRadius = 0
     private var hasRippleEffect = false
     private var animDuration = EASE_ANIM_DURATION
@@ -33,8 +32,17 @@ class TouchEffectAnimator {
     private val mRectPath = Path()
     private var isTouchReleased = false
     private var isAnimatingFadeIn = false
+    /*private var rectf: RectF =
+        RectF(0f, 0f, this.mView.width.toFloat(), this.mView.height.toFloat())*/
 
-    private val animationListener = object : Animation.AnimationListener{
+    /*private var rectf: RectF = RectF(
+        (cell.col * width).toFloat(),
+        (cell.row * height).toFloat(),
+        ((cell.col + 1) * width).toFloat(),
+        ((cell.row + 1) * height).toFloat()
+    )*/
+
+    private val animationListener = object : Animation.AnimationListener {
         override fun onAnimationRepeat(animation: Animation?) {
 
         }
@@ -48,10 +56,6 @@ class TouchEffectAnimator {
             isAnimatingFadeIn = true
         }
 
-    }
-
-    fun TouchEffectAnimator(mView: View?) {
-        this.mView = mView
     }
 
     fun setHasRippleEffect(hasRippleEffect: Boolean) {
@@ -118,20 +122,20 @@ class TouchEffectAnimator {
         if (hasRippleEffect) {
             mCirclePath.reset()
             mCirclePaint.alpha = mCircleAlpha
-            /*mCirclePath.addRoundRect(
-                RectF(0, 0, mView!!.width.toFloat(), mView!!.height.toFloat()),
+            mCirclePath.addRoundRect(
+                RectF(0f, 0f, this.mView.width.toFloat(), this.mView.height.toFloat()),
                 mClipRadius.toFloat(), mClipRadius.toFloat(), Path.Direction.CW
-            )*/
+            )
             canvas.clipPath(mCirclePath)
             canvas.drawCircle(mDownX, mDownY, mRadius, mCirclePaint)
         }
         mRectPath.reset()
         if (hasRippleEffect && mCircleAlpha != 255) mRectAlpha = mCircleAlpha / 2
         mRectPaint.alpha = mRectAlpha
-        /*canvas.drawRoundRect(
-            RectF(0, 0, mView!!.width.toFloat(), mView!!.height.toFloat()), mClipRadius,
-            mClipRadius, mRectPaint
-        )*/
+        canvas.drawRoundRect(
+            RectF(0f, 0f, this.mView.width.toFloat(), this.mView.height.toFloat()), mClipRadius.toFloat(),
+            mClipRadius.toFloat(), mRectPaint
+        )
     }
 
     private fun fadeOutEffect() {
@@ -147,7 +151,8 @@ class TouchEffectAnimator {
         mView!!.startAnimation(valueGeneratorAnim)
     }
 
-    class ValueGeneratorAnim(private val interpolatedTimeCallback: InterpolatedTimeCallback): Animation() {
+    class ValueGeneratorAnim(private val interpolatedTimeCallback: InterpolatedTimeCallback) :
+        Animation() {
 
         override fun applyTransformation(interpolatedTime: Float, t: Transformation?) {
             this.interpolatedTimeCallback.onTimeUpdate(interpolatedTime)

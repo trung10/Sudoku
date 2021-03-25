@@ -23,6 +23,8 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
     private var noteWidth = (width / size) / sqrtSize.toFloat()
 
+    private var rippleEffectAnimator: RippleEffectAnimator = RippleEffectAnimator(this)
+
     private val regularLinePaint = Paint().apply {
         style = Paint.Style.STROKE
         color = Color.BLACK
@@ -81,6 +83,25 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         color = Color.BLACK
     }
 
+    init {
+        // you should set a background to view for effect to be visible. in this sample, this
+        // linear layout contains a transparent background which is set inside the XML
+
+        // giving the view to animate on
+
+        // enabling ripple effect. it only performs ease effect without enabling ripple effect
+        rippleEffectAnimator.setHasRippleEffect(true)
+
+        // setting the effect color
+        rippleEffectAnimator.setEffectColor(Color.LTGRAY)
+
+        // setting the duration
+        rippleEffectAnimator.setAnimDuration(1000)
+
+        // setting radius to clip the effect. use it if you have a rounded background
+        rippleEffectAnimator.setClipRadius(0)
+    }
+
     override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec)
         val size = Math.min(measuredWidth, measuredHeight)
@@ -109,6 +130,9 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         fillCells(canvas)
         drawLines(canvas)
         drawNumbers(canvas)
+
+        rippleEffectAnimator.onDraw(canvas)
+
     }
 
     private fun fillCells(canvas: Canvas) {
@@ -127,12 +151,12 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
                 row == selectedRow || col == selectedCol -> {
                     paintSquareAndRow(canvas, cell, row, col)
 
-                    if (isSolvedRow(row)){
+                    if (isSolvedRow(row)) {
                         //todo animation
 
                     }
 
-                    if (isSolvedCol(col)){
+                    if (isSolvedCol(col)) {
                         //todo animation
 
                     }
@@ -140,7 +164,7 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
                 row / sqrtSize == selectedRow / sqrtSize && col / sqrtSize == selectedCol / sqrtSize -> {
                     paintSquareAndRow(canvas, cell, row, col)
 
-                    if (isSolvedSquare(row, col)){
+                    if (isSolvedSquare(row, col)) {
                         //todo animation
 
                     }
@@ -154,7 +178,7 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
     }
 
     private fun isSolvedSquare(row: Int, col: Int): Boolean {
-        if(selectedRow == -1 || selectedCol == -1) {
+        if (selectedRow == -1 || selectedCol == -1) {
             // do nothing
             return false
         }
@@ -164,9 +188,9 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
         cells?.let {
             for (i in 0..2) {
-                for (j in 0..2){
-                   if (!it[(i + sqrtSize * squaredRow) * size  + j + sqrtSize * squareCol].isSolved)
-                       return false
+                for (j in 0..2) {
+                    if (!it[(i + sqrtSize * squaredRow) * size + j + sqrtSize * squareCol].isSolved)
+                        return false
                 }
             }
         }
@@ -177,8 +201,8 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
     private fun isSolvedRow(row: Int): Boolean {
         cells?.let {
             for (i in 0..8) {
-               if (!it[row * size + i].isSolved)
-                   return false
+                if (!it[row * size + i].isSolved)
+                    return false
             }
         }
         return true
@@ -281,6 +305,8 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        rippleEffectAnimator.onTouchEvent(event)
+
         return when (event.action) {
             MotionEvent.ACTION_DOWN -> {
                 handleTouchEvent(event.x, event.y)
