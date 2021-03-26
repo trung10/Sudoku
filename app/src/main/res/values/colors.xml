@@ -608,5 +608,5 @@
     <color name="zui_text_color_light_white">@color/zui_color_light_grey</color>
     <color name="zui_window_background_color">@color/zui_color_light_grey</color>
 
-    <color name="test">#804A90E2</color>
+    <color name="test">#664A90E2</color>
 </resources>

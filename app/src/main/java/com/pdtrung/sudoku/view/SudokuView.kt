@@ -73,6 +73,14 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         color = Color.parseColor("#4D4A90E2")
     }
 
+    private val solvedSquareRowColPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.parseColor("#664A90E2")
+        //todo change
+        xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC)
+    }
+
+
     private val selectedSameValuePaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
         color = Color.parseColor("#804A90E2")
@@ -90,7 +98,7 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         // giving the view to animate on
 
         // enabling ripple effect. it only performs ease effect without enabling ripple effect
-        rippleEffectAnimator.setHasRippleEffect(true)
+        rippleEffectAnimator.setHasRippleEffect(false)
 
         // setting the effect color
         rippleEffectAnimator.setEffectColor(Color.LTGRAY)
@@ -171,7 +179,8 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
                 }
 
                 cells != null && cell.value != 0 && cell.value == getSelectedCell().value -> {
-                    fillCell(canvas, row, col, selectedSameValuePaint)
+                    fillCell(canvas, row, col, solvedSquareRowColPaint)
+
                 }
             }
         }
@@ -305,7 +314,7 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        rippleEffectAnimator.onTouchEvent(event)
+        //rippleEffectAnimator.onTouchEvent(event)
 
         return when (event.action) {
             MotionEvent.ACTION_DOWN -> {

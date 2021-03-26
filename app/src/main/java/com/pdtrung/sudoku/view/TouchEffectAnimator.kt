@@ -4,6 +4,7 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.Path
 import android.graphics.RectF
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.animation.Animation
@@ -114,7 +115,7 @@ class RippleEffectAnimator(private var mView: View) {
             valueGeneratorAnim.interpolator = DecelerateInterpolator()
             valueGeneratorAnim.duration = animDuration.toLong()
             valueGeneratorAnim.setAnimationListener(animationListener)
-            mView!!.startAnimation(valueGeneratorAnim)
+            mView.startAnimation(valueGeneratorAnim)
         }
     }
 
@@ -133,8 +134,8 @@ class RippleEffectAnimator(private var mView: View) {
         if (hasRippleEffect && mCircleAlpha != 255) mRectAlpha = mCircleAlpha / 2
         mRectPaint.alpha = mRectAlpha
         canvas.drawRoundRect(
-            RectF(0f, 0f, this.mView.width.toFloat(), this.mView.height.toFloat()), mClipRadius.toFloat(),
-            mClipRadius.toFloat(), mRectPaint
+            RectF(0f, 0f, this.mView.width.toFloat(), this.mView.height.toFloat()),
+            mClipRadius.toFloat(), mClipRadius.toFloat(), mRectPaint
         )
     }
 
