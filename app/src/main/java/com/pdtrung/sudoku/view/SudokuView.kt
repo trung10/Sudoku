@@ -3,8 +3,10 @@ package com.pdtrung.sudoku.view
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import com.pdtrung.sudoku.extensions.postDelay100ms
 import com.pdtrung.sudoku.model.Cell
 
 class SudokuView(context: Context, attributes: AttributeSet) : View(context, attributes) {
@@ -75,9 +77,15 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
     private val solvedSquareRowColPaint = Paint().apply {
         style = Paint.Style.FILL_AND_STROKE
-        color = Color.parseColor("#664A90E2")
+        color = Color.BLACK//Color.parseColor("#664A90E2")
         //todo change
-        xfermode = PorterDuffXfermode(PorterDuff.Mode.SRC)
+        //xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+    }
+
+    private val solvedErasePaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = 0//Color.parseColor("#664A90E2")
+        xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
     }
 
 
@@ -161,44 +169,62 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
                     if (isSolvedRow(row)) {
                         //todo animation
-
+                        fillCellSolvedAnimation(canvas, row, col)
                     }
 
                     if (isSolvedCol(col)) {
                         //todo animation
+                        fillCellSolvedAnimation(canvas, row, col)
 
                     }
                 }
                 row / sqrtSize == selectedRow / sqrtSize && col / sqrtSize == selectedCol / sqrtSize -> {
                     paintSquareAndRow(canvas, cell, row, col)
 
+
                     if (isSolvedSquare(row, col)) {
                         //todo animation
+
+                        fillCellSolvedAnimation(canvas, row, col)
 
                     }
                 }
 
                 cells != null && cell.value != 0 && cell.value == getSelectedCell().value -> {
-                    fillCell(canvas, row, col, solvedSquareRowColPaint)
+                    // same value
+                    fillCell(canvas, row, col, selectedSameValuePaint)
 
                 }
             }
         }
     }
 
+    private fun fillCellSolvedAnimation(canvas: Canvas, row: Int, col: Int) {
+        fillCell(canvas, row, col, solvedSquareRowColPaint)
+
+        postDelay100ms {
+            fillCell(canvas, row, col, solvedErasePaint)
+        }
+    }
+
     private fun isSolvedSquare(row: Int, col: Int): Boolean {
-        if (selectedRow == -1 || selectedCol == -1) {
+        if (row == -1 || col == -1) {
             // do nothing
             return false
         }
 
-        val squareCol = selectedCol / sqrtSize
-        val squaredRow = selectedRow / sqrtSize
+        val squareCol = col / sqrtSize
+        val squaredRow = row / sqrtSize
 
         cells?.let {
             for (i in 0..2) {
                 for (j in 0..2) {
-                    if (!it[(i + sqrtSize * squaredRow) * size + j + sqrtSize * squareCol].isSolved)
+
+                    val index = (i + sqrtSize * squaredRow) * size + j + sqrtSize * squareCol
+
+                    //Log.e("Trunggggggggg", "${it[index].row} ${it[index].col} ${it[index].solvedValue} ${it[index].value} ${it[index].isSolved}")
+
+                    if (!it[index].isStartingCell && it[index].solvedValue != it[index].value)
                         return false
                 }
             }
