@@ -3,10 +3,12 @@ package com.pdtrung.sudoku.model
 import android.content.Context
 import android.util.Log
 import com.pdtrung.sudoku.game.Generator
+import kotlin.math.sqrt
 
 class Board(val size: Int, val cells: List<Cell>/*, private val solvedCells: List<Cell>*/) {
     private var listener: PuzzleListener? = null
     private var mistake = 0 // if it equal 3 game is over
+    private val sqrtSize: Int = sqrt(size.toDouble()).toInt()
 
     fun updateCell(row: Int, col: Int, value: Int) {
         if (row != -1 && col != -1) {
@@ -16,7 +18,10 @@ class Board(val size: Int, val cells: List<Cell>/*, private val solvedCells: Lis
                     listener?.isGameOVer()
             }
 
-            getCell(row, col).value = value
+            if (getCell(row, col).value == value)
+                getCell(row, col).value = 0
+             else
+                getCell(row, col).value = value
         }
 
         if (isSolved()) {
@@ -38,9 +43,7 @@ class Board(val size: Int, val cells: List<Cell>/*, private val solvedCells: Lis
 
         if (isSolved()) {
             Log.d("Board", "Puzzle Solved")
-            if (listener != null) {
-                listener!!.isPuzzleSolved(true)
-            }
+            listener?.isPuzzleSolved(true)
         }
     }
 
@@ -77,6 +80,51 @@ class Board(val size: Int, val cells: List<Cell>/*, private val solvedCells: Lis
     fun setListener(listener: PuzzleListener) {
         this.listener = listener
     }
+
+    private fun isSolvedSquare(row: Int, col: Int): Boolean {
+        if (row == -1 || col == -1) {
+            // do nothing
+            return false
+        }
+
+        val squareCol = col / sqrtSize
+        val squaredRow = row / sqrtSize
+
+        cells.let {
+            for (i in 0..2) {
+                for (j in 0..2) {
+
+                    val index = (i + sqrtSize * squaredRow) * size + j + sqrtSize * squareCol
+
+                    if (!it[index].isStartingCell && it[index].solvedValue != it[index].value)
+                        return false
+                }
+            }
+        }
+
+        return true
+    }
+
+    private fun isSolvedRow(row: Int): Boolean {
+        cells.let {
+            for (i in 0..8) {
+                if (!it[row * size + i].isStartingCell && !it[row * size + i].isSolved)
+                    return false
+            }
+        }
+        return true
+    }
+
+    private fun isSolvedCol(col: Int): Boolean {
+        cells.let {
+            for (i in 0..8) {
+                if (!it[i * size + col].isSolved)
+                    return false
+            }
+        }
+        return true
+    }
+
 
     fun getCell(row: Int, col: Int) = cells[row * size + col]
     //private fun getSolvedCell(row: Int, col: Int) = solvedCells[row * size + col]

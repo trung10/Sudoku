@@ -10,4 +10,6 @@ data class Cell(
     var notes = mutableSetOf<Int>()
 
     var isSolved = solvedValue == value
+
+    var alpha = 255
 }

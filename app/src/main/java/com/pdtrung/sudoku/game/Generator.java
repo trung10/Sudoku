@@ -1,7 +1,5 @@
 package com.pdtrung.sudoku.game;
 
-import android.util.Log;
-
 public class Generator {
     private int[] mat[];
     int N; // number of columns/rows.

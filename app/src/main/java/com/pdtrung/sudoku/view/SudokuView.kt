@@ -3,10 +3,9 @@ package com.pdtrung.sudoku.view
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
-import com.pdtrung.sudoku.extensions.postDelay100ms
+import androidx.core.view.postOnAnimationDelayed
 import com.pdtrung.sudoku.model.Cell
 
 class SudokuView(context: Context, attributes: AttributeSet) : View(context, attributes) {
@@ -24,6 +23,8 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
     private var listener: SudokuBoardTouchListener? = null
 
     private var noteWidth = (width / size) / sqrtSize.toFloat()
+
+    private val ALPHA_STEP = 100
 
     private var rippleEffectAnimator: RippleEffectAnimator = RippleEffectAnimator(this)
 
@@ -82,7 +83,18 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         //xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
     }
 
+    private val alertMistakePaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.parseColor("#cc3340"/*"#6ead3a"*/)
+    }
+
+    private val alphaPaint = Paint().apply {
+        style = Paint.Style.FILL_AND_STROKE
+        color = Color.parseColor("#4a90e2")
+    }
+
     private val solvedErasePaint = Paint().apply {
+        alpha = 0
         style = Paint.Style.FILL_AND_STROKE
         color = 0//Color.parseColor("#664A90E2")
         xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
@@ -147,8 +159,36 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         drawLines(canvas)
         drawNumbers(canvas)
 
+        drawAnimationFinishSection(canvas)
+
         rippleEffectAnimator.onDraw(canvas)
 
+    }
+
+
+    private fun drawAnimationFinishSection(canvas: Canvas) {
+
+        cells?.forEach { cell ->
+
+            val row = cell.row
+            val col = cell.col
+
+            if (row == 9)
+                return
+
+            postDelayed({
+                if (cell.alpha >= 0) {
+                    alphaPaint.alpha = cell.alpha
+                    cell.alpha -= 85//ALPHA_STEP
+
+                    //postInvalidateDelayed(100)
+                    //fillCell(canvas, row, col, alphaPaint)
+                } else {
+                    cell.alpha = 255
+                    alphaPaint.alpha = cell.alpha
+                }
+            }, (10 * row).toLong())
+        }
     }
 
     private fun fillCells(canvas: Canvas) {
@@ -167,95 +207,50 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
                 row == selectedRow || col == selectedCol -> {
                     paintSquareAndRow(canvas, cell, row, col)
 
-                    if (isSolvedRow(row)) {
+                    /*if (isSolvedRow(row)) {
                         //todo animation
-                        fillCellSolvedAnimation(canvas, row, col)
+                        //fillCellSolvedAnimation(canvas, row, col)
                     }
 
                     if (isSolvedCol(col)) {
                         //todo animation
-                        fillCellSolvedAnimation(canvas, row, col)
+                        //fillCellSolvedAnimation(canvas, row, col)
 
-                    }
+                    }*/
                 }
                 row / sqrtSize == selectedRow / sqrtSize && col / sqrtSize == selectedCol / sqrtSize -> {
-                    paintSquareAndRow(canvas, cell, row, col)
-
-
-                    if (isSolvedSquare(row, col)) {
+                    /*if (isSolvedSquare(row, col)) {
                         //todo animation
 
-                        fillCellSolvedAnimation(canvas, row, col)
+                        //fillCellSolvedAnimation(canvas, row, col)
+                    }*/
 
-                    }
+                    paintSquareAndRow(canvas, cell, row, col)
                 }
 
                 cells != null && cell.value != 0 && cell.value == getSelectedCell().value -> {
                     // same value
                     fillCell(canvas, row, col, selectedSameValuePaint)
-
                 }
             }
         }
-    }
-
-    private fun fillCellSolvedAnimation(canvas: Canvas, row: Int, col: Int) {
-        fillCell(canvas, row, col, solvedSquareRowColPaint)
-
-        postDelay100ms {
-            fillCell(canvas, row, col, solvedErasePaint)
-        }
-    }
-
-    private fun isSolvedSquare(row: Int, col: Int): Boolean {
-        if (row == -1 || col == -1) {
-            // do nothing
-            return false
-        }
-
-        val squareCol = col / sqrtSize
-        val squaredRow = row / sqrtSize
-
-        cells?.let {
-            for (i in 0..2) {
-                for (j in 0..2) {
-
-                    val index = (i + sqrtSize * squaredRow) * size + j + sqrtSize * squareCol
-
-                    //Log.e("Trunggggggggg", "${it[index].row} ${it[index].col} ${it[index].solvedValue} ${it[index].value} ${it[index].isSolved}")
-
-                    if (!it[index].isStartingCell && it[index].solvedValue != it[index].value)
-                        return false
-                }
-            }
-        }
-
-        return true
-    }
-
-    private fun isSolvedRow(row: Int): Boolean {
-        cells?.let {
-            for (i in 0..8) {
-                if (!it[row * size + i].isSolved)
-                    return false
-            }
-        }
-        return true
-    }
-
-    private fun isSolvedCol(col: Int): Boolean {
-        cells?.let {
-            for (i in 0..8) {
-                if (!it[i * size + col].isSolved)
-                    return false
-            }
-        }
-        return true
     }
 
     private fun paintSquareAndRow(canvas: Canvas, cell: Cell, row: Int, col: Int) {
         if (cells != null && cell.value != 0 && cell.value == getSelectedCell().value) {
             fillCell(canvas, row, col, mistakeTextPaint)
+
+            if (cell.alpha > 0) {
+                alertMistakePaint.alpha = cell.alpha
+                cell.alpha -= ALPHA_STEP
+
+                postInvalidateDelayed(100)
+                fillCell(canvas, row, col, alertMistakePaint)
+            } else {
+                cell.alpha = 255
+                alertMistakePaint.alpha = cell.alpha
+            }
+
         } else {
             fillCell(canvas, row, col, selectedSameRowColPaint)
         }

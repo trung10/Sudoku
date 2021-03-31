@@ -4,7 +4,7 @@ import com.pdtrung.sudoku.base.`interface`.Command
 import com.pdtrung.sudoku.base.`interface`.UndoableCommand
 import java.util.*
 
-class CommandManager() {
+class CommandManager {
     private val undoableStack = Stack<UndoableCommand>()
 
     fun executeCommand(command: Command) {
