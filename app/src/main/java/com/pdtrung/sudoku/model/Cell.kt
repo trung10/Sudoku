@@ -11,5 +11,19 @@ data class Cell(
 
     var isSolved = solvedValue == value
 
-    var alpha = 255
+    private var _isAnimation: Boolean = false
+
+    fun setAnimation(b: Boolean) {
+        this._isAnimation = b
+    }
+
+    fun getAnimation(): Boolean {
+        if (!_isAnimation)
+            return _isAnimation
+
+        _isAnimation = false
+        return true
+        
+    }
+
 }
