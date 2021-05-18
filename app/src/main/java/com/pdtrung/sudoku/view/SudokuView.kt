@@ -1,11 +1,13 @@
 package com.pdtrung.sudoku.view
 
+import android.animation.Keyframe
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.view.postOnAnimationDelayed
 import com.pdtrung.sudoku.model.Cell
 
 class SudokuView(context: Context, attributes: AttributeSet) : View(context, attributes) {
@@ -176,18 +178,6 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
             if (row == 9)
                 return
 
-            postDelayed({
-                if (cell.alpha >= 0) {
-                    alphaPaint.alpha = cell.alpha
-                    cell.alpha -= 85//ALPHA_STEP
-
-                    //postInvalidateDelayed(100)
-                    //fillCell(canvas, row, col, alphaPaint)
-                } else {
-                    cell.alpha = 255
-                    alphaPaint.alpha = cell.alpha
-                }
-            }, (10 * row).toLong())
         }
     }
 
@@ -240,7 +230,7 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         if (cells != null && cell.value != 0 && cell.value == getSelectedCell().value) {
             fillCell(canvas, row, col, mistakeTextPaint)
 
-            if (cell.alpha > 0) {
+            /*if (cell.alpha > 0) {
                 alertMistakePaint.alpha = cell.alpha
                 cell.alpha -= ALPHA_STEP
 
@@ -249,7 +239,7 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
             } else {
                 cell.alpha = 255
                 alertMistakePaint.alpha = cell.alpha
-            }
+            }*/
 
         } else {
             fillCell(canvas, row, col, selectedSameRowColPaint)
@@ -258,11 +248,11 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
     }
 
     private fun fillCell(canvas: Canvas, row: Int, col: Int, paint: Paint) = canvas.drawRect(
-        col * cellWidth,
-        row * cellHeight,
-        (col + 1) * cellWidth,
-        (row + 1) * cellHeight,
-        paint
+            col * cellWidth,
+            row * cellHeight,
+            (col + 1) * cellWidth,
+            (row + 1) * cellHeight,
+            paint
     )
 
     private fun getSelectedCell() = cells!![selectedRow * size + selectedCol]
@@ -303,10 +293,10 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
                 val textHeight = textBounds.height()
 
                 canvas.drawText(
-                    valueString,
-                    (cell.col * cellWidth) + (colInCell * noteWidth) + noteWidth / 2 - (textWidth / 2f),
-                    (cell.row * cellHeight) + (rowInCell * noteWidth) + noteWidth / 2 + (textHeight / 2f),
-                    noteTextPaint
+                        valueString,
+                        (cell.col * cellWidth) + (colInCell * noteWidth) + noteWidth / 2 - (textWidth / 2f),
+                        (cell.row * cellHeight) + (rowInCell * noteWidth) + noteWidth / 2 + (textHeight / 2f),
+                        noteTextPaint
                 )
             }
         } else {
@@ -326,10 +316,10 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
             val textHeight = textBounds.height()
 
             canvas.drawText(
-                valueString,
-                (col * cellWidth) + cellWidth / 2 - (textWidth / 2f),
-                (row * cellHeight) + cellHeight / 2 + (textHeight / 2f),
-                paintToUse
+                    valueString,
+                    (col * cellWidth) + cellWidth / 2 - (textWidth / 2f),
+                    (row * cellHeight) + cellHeight / 2 + (textHeight / 2f),
+                    paintToUse
             )
         }
     }
@@ -365,6 +355,21 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
     fun registerListener(listener: SudokuBoardTouchListener) {
         this.listener = listener
+    }
+
+    fun ss() {
+
+        val p1 = PropertyValuesHolder.ofKeyframe("sss",
+                Keyframe.ofInt(0f, 1),
+                Keyframe.ofInt(0f, 2),
+                Keyframe.ofInt(0f, 3))
+
+        val p2 = PropertyValuesHolder.ofKeyframe("",
+                Keyframe.ofInt(0f, 1),
+                Keyframe.ofInt(0f, 2),
+                Keyframe.ofInt(0f, 3))
+
+        ObjectAnimator.ofPropertyValuesHolder(this, p1)
     }
 
     interface SudokuBoardTouchListener {
