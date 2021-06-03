@@ -1,14 +1,15 @@
 package com.pdtrung.sudoku.view
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import androidx.core.view.postOnAnimationDelayed
 import com.pdtrung.sudoku.model.Cell
 
-class SudokuView(context: Context, attributes: AttributeSet) : View(context, attributes) {
+
+class SudokuView(context: Context, attributes: AttributeSet) : View(context, attributes), ValueAnimator.AnimatorUpdateListener{
     private val TAG = "SudokuView"
 
     private val sqrtSize = 3
@@ -159,9 +160,9 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         drawLines(canvas)
         drawNumbers(canvas)
 
-        drawAnimationFinishSection(canvas)
+        //drawAnimationFinishSection(canvas)
 
-        rippleEffectAnimator.onDraw(canvas)
+        //rippleEffectAnimator.onDraw(canvas)
 
     }
 
@@ -176,18 +177,6 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
             if (row == 9)
                 return
 
-            postDelayed({
-                if (cell.alpha >= 0) {
-                    alphaPaint.alpha = cell.alpha
-                    cell.alpha -= 85//ALPHA_STEP
-
-                    //postInvalidateDelayed(100)
-                    //fillCell(canvas, row, col, alphaPaint)
-                } else {
-                    cell.alpha = 255
-                    alphaPaint.alpha = cell.alpha
-                }
-            }, (10 * row).toLong())
         }
     }
 
@@ -240,22 +229,25 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         if (cells != null && cell.value != 0 && cell.value == getSelectedCell().value) {
             fillCell(canvas, row, col, mistakeTextPaint)
 
-            if (cell.alpha > 0) {
-                alertMistakePaint.alpha = cell.alpha
-                cell.alpha -= ALPHA_STEP
+            /* if (cell.alpha > 0) {
+                 alertMistakePaint.alpha = cell.alpha
+                 cell.alpha -= ALPHA_STEP
 
-                postInvalidateDelayed(100)
-                fillCell(canvas, row, col, alertMistakePaint)
-            } else {
-                cell.alpha = 255
-                alertMistakePaint.alpha = cell.alpha
-            }
+                 postInvalidateDelayed(100)
+                 fillCell(canvas, row, col, alertMistakePaint)
+             } else {
+                 cell.alpha = 255
+                 alertMistakePaint.alpha = cell.alpha
+             }*/
 
         } else {
             fillCell(canvas, row, col, selectedSameRowColPaint)
+            cell.e(time, this, Color.GRAY, Color.LTGRAY).start()
         }
 
     }
+
+    var time = 1
 
     private fun fillCell(canvas: Canvas, row: Int, col: Int, paint: Paint) = canvas.drawRect(
         col * cellWidth,
@@ -264,6 +256,20 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         (row + 1) * cellHeight,
         paint
     )
+
+    private fun playAnimation(canvas: Canvas, row: Int, col: Int, paint: Paint) {
+        //todo change
+        paint.colorFilter = PorterDuffColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY)
+
+        canvas.drawRect(
+            col * cellWidth,
+            row * cellHeight,
+            (col + 1) * cellWidth,
+            (row + 1) * cellHeight,
+            paint
+        )
+    }
+
 
     private fun getSelectedCell() = cells!![selectedRow * size + selectedCol]
 
@@ -369,5 +375,9 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
     interface SudokuBoardTouchListener {
         fun cellSelected(row: Int, col: Int)
+    }
+
+    override fun onAnimationUpdate(animation: ValueAnimator?) {
+        postInvalidate()
     }
 }
