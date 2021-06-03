@@ -1,15 +1,14 @@
 package com.pdtrung.sudoku.view
 
-import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import androidx.core.view.postOnAnimationDelayed
 import com.pdtrung.sudoku.model.Cell
 
-
-class SudokuView(context: Context, attributes: AttributeSet) : View(context, attributes), ValueAnimator.AnimatorUpdateListener{
+class SudokuView(context: Context, attributes: AttributeSet) : View(context, attributes) {
     private val TAG = "SudokuView"
 
     private val sqrtSize = 3
@@ -242,12 +241,9 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
         } else {
             fillCell(canvas, row, col, selectedSameRowColPaint)
-            cell.e(time, this, Color.GRAY, Color.LTGRAY).start()
         }
 
     }
-
-    var time = 1
 
     private fun fillCell(canvas: Canvas, row: Int, col: Int, paint: Paint) = canvas.drawRect(
         col * cellWidth,
@@ -256,20 +252,6 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
         (row + 1) * cellHeight,
         paint
     )
-
-    private fun playAnimation(canvas: Canvas, row: Int, col: Int, paint: Paint) {
-        //todo change
-        paint.colorFilter = PorterDuffColorFilter(Color.GREEN, PorterDuff.Mode.MULTIPLY)
-
-        canvas.drawRect(
-            col * cellWidth,
-            row * cellHeight,
-            (col + 1) * cellWidth,
-            (row + 1) * cellHeight,
-            paint
-        )
-    }
-
 
     private fun getSelectedCell() = cells!![selectedRow * size + selectedCol]
 
@@ -375,9 +357,5 @@ class SudokuView(context: Context, attributes: AttributeSet) : View(context, att
 
     interface SudokuBoardTouchListener {
         fun cellSelected(row: Int, col: Int)
-    }
-
-    override fun onAnimationUpdate(animation: ValueAnimator?) {
-        postInvalidate()
     }
 }

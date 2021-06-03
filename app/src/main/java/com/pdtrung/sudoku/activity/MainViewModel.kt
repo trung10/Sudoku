@@ -11,20 +11,24 @@ class MainViewModel(val sudokuGame: SudokuGame) : BaseViewModel() {
     private val commandManager: CommandManager = CommandManager()
 
     fun erase() {
-        commandManager.executeCommand(EraseCommand(sudokuGame))
+        if (sudokuGame.isSelectedCell())
+            commandManager.executeCommand(EraseCommand(sudokuGame))
     }
 
     fun fill(value: Int) {
-        commandManager.executeCommand(FillCommand(sudokuGame, value))
+        if (sudokuGame.isSelectedCell())
+            commandManager.executeCommand(FillCommand(sudokuGame, value))
 
     }
 
     fun notes() {
-        sudokuGame.changeNoteState()
+        if (sudokuGame.isSelectedCell())
+            sudokuGame.changeNoteState()
         //commandManager.executeCommand(EraseCommand(sudokuGame))
     }
 
     fun undo() {
-        commandManager.undo()
+        if (sudokuGame.isSelectedCell())
+            commandManager.undo()
     }
 }

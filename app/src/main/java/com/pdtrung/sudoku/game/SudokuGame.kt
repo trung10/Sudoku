@@ -3,9 +3,9 @@ package com.pdtrung.sudoku.game
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.patrickfeltes.sudokuandroid.common.GameTimer
-import com.pdtrung.sudoku.model.TimeInfo
 import com.pdtrung.sudoku.model.Board
 import com.pdtrung.sudoku.model.Cell
+import com.pdtrung.sudoku.model.TimeInfo
 
 class SudokuGame(context: Context) : GameTimer.GameTimerListener {
 
@@ -43,8 +43,10 @@ class SudokuGame(context: Context) : GameTimer.GameTimerListener {
 
     fun getSelectedCell(): Cell = board.getCell(selectedRow, selectedCol)
 
+    fun isSelectedCell() = !(selectedRow == -1 || selectedCol == -1)
+
     fun handleInput(value: Int) {
-        if (selectedRow == -1 || selectedCol == -1) return
+        if (!isSelectedCell()) return
         if (isTakingNotes) {
             val cell = board.getCell(selectedRow, selectedCol)
 
